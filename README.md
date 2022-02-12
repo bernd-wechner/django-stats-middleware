@@ -17,7 +17,7 @@ Where:
 
 Here's an example:
 
-![image-20220212213923280](/home/bernd/.var/app/io.typora.Typora/config/Typora/typora-user-images/image-20220212213923280.png)
+![sample](https://raw.githubusercontent.com/bernd-wechner/django-stats-middleware/master/sample.png)
 
 To use it just put it at the top of your Django Middleware stack:
 
