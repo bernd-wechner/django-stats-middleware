@@ -1,3 +1,22 @@
+Metadata-Version: 2.1
+Name: django-stats-middleware
+Version: 0.3
+Summary: Django Middleware for reporting very simple lightweight timing stats at end of ever page.
+Home-page: https://github.com/bernd-wechner/django-stats-middleware
+Author: Bernd Wechner
+Author-email: bwechner@yahoo.com
+Project-URL: Bug Tracker, https://github.com/bernd-wechner/django-stats-middleware/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: Freely Distributable
+Classifier: Operating System :: OS Independent
+Classifier: Development Status :: 4 - Beta
+Classifier: Framework :: Django :: 4.0
+Classifier: Intended Audience :: System Administrators
+Classifier: Topic :: Internet :: WWW/HTTP :: HTTP Servers
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE.md
+
 # Django Stats Middleware
 
 [Django](https://www.djangoproject.com/) is one of the most popular Python web frameworks today.

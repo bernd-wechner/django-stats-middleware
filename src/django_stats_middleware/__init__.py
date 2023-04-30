@@ -8,23 +8,34 @@ Django Stats Middleware
 
 Inserts some basic performance stats just prior to the </body> tag in the response of every page served.
 
-To use, add it to the MIDDLEWARE list in settings.py as follows:
+To use, add it to the MIDDLEWARE list in settings.py as follows (put it first to catch all times):
 
-MIDDLEWARE = (
-    'django_stats_middleware.StatsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware'    
-)
+    MIDDLEWARE = (
+        'django_stats_middleware.StatsMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'django.middleware.security.SecurityMiddleware'
+    )
+
+It provides minimal default css also and for this it be incorporated in your site, add it as an app:
+
+    INSTALLED_APPS += (
+        'django_stats_middleware',
+    )
+
+and include the CSS with:
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'django-stats-middleware/css/default.css' %}" />
 
 Can be easily tweaked below to deliver whatever stats you like.
 
-This information cannot be delivered to pages through the template context because timing information isn't 
-collected until the whole template is already rendered. To wit, it is patched into the content just above 
+This information cannot be delivered to pages through the template context because timing information isn't
+collected until the whole template is already rendered. To wit, it is patched into the content just above
 the </body> tag. If your page has no such tag, stats won't appear on it of course.
 
 This of course, is primarily a debugging tool. And hence does nothing if settings.DEBUG is False.
@@ -43,6 +54,7 @@ from functools import reduce
 # Django Imports
 from django.db import connection
 from django.conf import settings
+
 
 class StatsMiddleware(object):
 
@@ -72,19 +84,23 @@ class StatsMiddleware(object):
 
         # and backout python time
         python_time = total_time - db_time
-        
-        stats = br''.join((br'<div id="stats" style="margin-top:1ex"><table><tr>'
-                           br'<td><b>STATS:</b></td>',
-                           br'<td style="padding-left: 5ch;">Total Time:</td><td>', "{:.1f} ms".format(total_time*1000).encode(), br'</td>',
-                           br'<td style="padding-left: 5ch;">Python Time:</td><td>', "{:.1f} ms".format(python_time).encode(), br'</td>',
-                           br'<td style="padding-left: 5ch;">DB Time:</td><td>', "{:.1f} ms".format(db_time).encode(), br'</td>',
-                           br'<td style="padding-left: 5ch;">Number of Queries:</td><td>', "{:,}".format(db_queries).encode(), br'</td>', 
-                           br'</tr></table></div>\1'))
+
+        div_class = "django_stats"
+        h1_class = "django_stats_heading1"
+        h2_class = "django_stats_heading2"
+        val_class = "django_stats_value"
+
+        stats = r''.join((fr'<div id="django_stats" class="{div_class}"><table><tr>'
+                          fr'<td class="{h1_class}"><b>STATS:</b></td>',
+                          fr'<td class="{h2_class}">Total Time:</td><td class="{val_class}">{total_time * 1000:.1f} ms</td>',
+                          fr'<td class="{h2_class}">Python Time:</td><td class="{val_class}">{python_time:.1f} ms</td>',
+                          fr'<td class="{h2_class}">DB Time:</td><td class="{val_class}">{db_time:.1f} ms</td>',
+                          fr'<td class="{h2_class}">Number of Queries:</td><td class="{val_class}">{db_queries:,}</td>',
+                          fr'</tr></table></div>\1'))
 
         # Insert the stats just prior to the body close tag (we need to update the Content-Length header or browser won't render it all.
         if response and getattr(response, 'content', False):
-            response.content = re.sub(br"(</body>)", stats, response.content, flags=ref.RegexFlag.IGNORECASE)
+            response.content = re.sub(br"(</body>)", stats.encode(), response.content, flags=re.RegexFlag.IGNORECASE)
             response['Content-Length'] = str(len(response.content))
 
         return response
-    

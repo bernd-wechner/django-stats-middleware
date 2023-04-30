@@ -1,0 +1,10 @@
+LICENSE.md
+README.md
+pyproject.toml
+setup.cfg
+src/django_stats_middleware/__init__.py
+src/django_stats_middleware/apps.py
+src/django_stats_middleware.egg-info/PKG-INFO
+src/django_stats_middleware.egg-info/SOURCES.txt
+src/django_stats_middleware.egg-info/dependency_links.txt
+src/django_stats_middleware.egg-info/top_level.txt

@@ -1,0 +1,1 @@
+django_stats_middleware
